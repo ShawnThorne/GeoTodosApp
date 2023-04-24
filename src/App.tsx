@@ -1,15 +1,13 @@
 import { useState } from 'react'
-import './App.css'
-import { Login } from './Login';
-import { Dashboard } from './Dashboard';
-import { Todo } from './Todo';
-import { CreateTodo } from './CreateTodo';
+import { Login } from './pages/Login';
+import { Dashboard } from './pages/Dashboard';
+import { Todo } from './pages/Todo';
+import { CreateTodo } from './pages/CreateTodo';
 import { NavBar } from './NavBar';
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-
 
 const router = createBrowserRouter([
   {
@@ -41,8 +39,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <div className="App">
       <RouterProvider router={router} />

@@ -8,21 +8,13 @@ import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-
   apiKey: "AIzaSyDWVrAA3sRJ0PBlbgAnpEmJgdb1lPbTVu8",
-
   authDomain: "geotodosapp.firebaseapp.com",
-
   projectId: "geotodosapp",
-
   storageBucket: "geotodosapp.appspot.com",
-
   messagingSenderId: "716093370179",
-
   appId: "1:716093370179:web:9c908a801992208c4d89f6",
-
   measurementId: "G-4FB36K1XMC"
-
 };
 
 
