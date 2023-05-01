@@ -18,19 +18,19 @@ export const Dashboard = () => {
                         <button className="action" onClick={() => setEdit(!edit)}>{edit ? "Confirm" : "Edit Locations"}</button>
                         <div className="location">
                             {edit ? (<button className="action">x</button>) : <div></div>}
-                            <div onClick={() => setLoc("Home")}>
+                            <div className="loc-text" onClick={() => setLoc("Home")}>
                                 Home
                             </div>
                         </div>
                         <div className="location">
                             {edit ? (<button className="action">x</button>) : <div></div>}
-                            <div onClick={() => setLoc("Work")}> 
+                            <div className="loc-text" onClick={() => setLoc("Work")}> 
                                 Work
                             </div>
                         </div>
                         <div className="location">
                             {edit ? (<button className="action">x</button>) : <div></div>}
-                            <div onClick={() => setLoc("School")}>
+                            <div className="loc-text" onClick={() => setLoc("School")}>
                                 School
                             </div>
                         </div>
