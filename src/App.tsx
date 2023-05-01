@@ -1,18 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Todo } from './pages/Todo';
 import { CreateTodo } from './pages/CreateTodo';
-import { NavBar } from './NavBar';
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import { Layout } from './pages/Layout';
+import { LocationContext } from './context/location';
 
 const router = createBrowserRouter([
   {
     path:'/',
-    element:<NavBar/>,
+    element:<Layout/>,
     children:[
       {
         path: "/",
@@ -39,10 +40,39 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const [lat, setLat] = useState(0);
+  const [lon, setLon] = useState(0);
+  const [locationLoaded, setLocationLoaded] = useState(false);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((location) => {
+      setLocationLoaded(true);
+      setLat(location.coords.latitude);
+      setLon(location.coords.longitude);
+    }, (err) => {
+      console.log(err)
+    }, {
+      enableHighAccuracy: true,
+    })
+    // const watch = navigator.geolocation.watchPosition((location) => {
+    //   setLat(location.coords.latitude);
+    //   setLon(location.coords.longitude);
+    //   setLocationLoaded(true);
+    // }, (err) => {
+    //   console.log(err)
+    // }, {
+    //   enableHighAccuracy: true,
+    // })
+
+    // return () => navigator.geolocation.clearWatch(watch)
+  }, []);
+
   return (
-    <div className="App">
-      <RouterProvider router={router} />
-    </div>
+    <LocationContext.Provider value={{lat, lon}}>
+      <div className="App">
+        <RouterProvider router={router} />
+      </div>
+    </LocationContext.Provider>
   )
 }
 

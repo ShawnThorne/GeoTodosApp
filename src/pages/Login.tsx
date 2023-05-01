@@ -14,7 +14,6 @@ export const Login = () => {
         })
     }
   
-  
     function login() {
       signInWithEmailAndPassword(auth, email, password)
         .then(({user}) => {
@@ -23,9 +22,9 @@ export const Login = () => {
     }
   
     return (
-      <div className="container">
-        <div className="login">
-          <div>Login / Create Account</div>
+      <div className="login">
+        <div className="header">Login / Create Account</div>
+        <div className="content">
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email"/>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password"/>
           <div className="login-controls">
