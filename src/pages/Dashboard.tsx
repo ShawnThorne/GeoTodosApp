@@ -19,6 +19,8 @@ type Location = {
 
 export const Dashboard = () => {
 
+    const directionsService = new google.maps.DirectionsService();
+    //TODO Make a request to each of the locations in the list and figure out which distance is shorter, then set the current location as that location
 
     const user = useContext(UserContext);
     const location = useContext(LocationContext);
