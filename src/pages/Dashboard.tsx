@@ -129,7 +129,7 @@ export const Dashboard = () => {
                     <div>
                         {
                             todoList.map((todo) => (
-                                <div className="todo" key={todo.message} onClick={() => navigate(`/todo/${loc}/${todo.message}`)}>
+                                <div className={`todo ${todo.isComplete ? 'complete' : ''}`} key={todo.message} onClick={() => navigate(`/todo/${loc}/${todo.message}`)}>
                                     {todo.message}
                                 </div>
                             ))

@@ -190,3 +190,9 @@ button:focus-visible {
   border-radius: 5px;
   margin: 4px;
 }
+
+.todo.complete {
+  background-color:#315739;
+  border-radius: 5px;
+  margin: 4px;
+}
