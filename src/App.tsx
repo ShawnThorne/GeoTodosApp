@@ -5,12 +5,13 @@ import { Todo } from './pages/Todo';
 import { CreateTodo } from './pages/CreateTodo';
 import {
   createBrowserRouter,
+  createHashRouter,
   RouterProvider,
 } from "react-router-dom";
 import { Layout } from './pages/Layout';
 import { LocationContext } from './context/location';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path:'/',
     element:<Layout/>,

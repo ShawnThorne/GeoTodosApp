@@ -20,7 +20,7 @@ type Location = {
 export const Dashboard = () => {
     const user = useContext(UserContext);
     const location = useContext(LocationContext);
-    const [loc, setLoc] = useState(`(${Math.round(location.lat * 1000) / 1000}, ${Math.round(location.lon * 1000) / 1000})`);
+    const [loc, setLoc] = useState<Location>({latitude: Math.round(location.lat * 1000) / 1000, longitude: Math.round(location.lon * 1000) / 1000, name: "", todos: ""});
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
     const [addLoc, setAddLoc] = useState(false);
@@ -52,7 +52,7 @@ export const Dashboard = () => {
             newTodoList.push(newTodo);
         }
         setTodoList(newTodoList);
-        setLoc(`${location.name} (${location.latitude},${location.longitude})`);
+        setLoc(location);
     }
 
     function deleteLoc(toDelete: Location) {
@@ -115,11 +115,11 @@ export const Dashboard = () => {
                     </div>
                 </div>
                 <div className="main-content">
-                    <div className="sub-header">Location: {loc}</div>
+                    <div className="sub-header">Location: {loc.name} ({loc.latitude},{loc.longitude})</div>
                     <div>
                         {
                             todoList.map((todo) => (
-                                <div className={`todo ${todo.isComplete ? 'complete' : ''}`} key={todo.message} onClick={() => navigate(`/todo/${loc}/${todo.message}`)}>
+                                <div className={`todo ${todo.isComplete ? 'complete' : ''}`} key={todo.message} onClick={() => navigate(`/todo/${loc.name}/${todo.message}`)}>
                                     {todo.message}
                                 </div>
                             ))
