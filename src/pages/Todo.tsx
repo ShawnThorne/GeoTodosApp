@@ -31,11 +31,7 @@ export const Todo = () => {
         <div>
             <h1>Todo: {params.message}</h1>
             <h1>IS COMPLETE: {isComplete ? "Yes" : "No"}</h1>
-            {!isComplete &&
-                <div>
-                    <button onClick={()=>completeTask()}>Complete This Task?</button>
-                </div>
-            }
+            <button onClick={()=>completeTask()}>{!isComplete ? "Complete This Task?": "Uncomplete This task"}</button>
         </div>
     )
 }
