@@ -195,3 +195,13 @@ button:focus-visible {
   border-radius: 5px;
   margin: 4px;
 }
+
+.detail {
+  font-size: 18pt;
+}
+
+.edit-detail {
+  font-size: 18pt;
+  width: 90%;
+  overflow-y: scroll;
+}
