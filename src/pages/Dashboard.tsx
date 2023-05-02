@@ -5,10 +5,16 @@ import UserContext from "../context/user";
 import { onValue, ref, set, push, onChildAdded, get, child } from "firebase/database";
 import { rtdb } from "../lib/firebase";
 
+type Todo = {
+    isComplete: boolean;
+    message: string;
+}
+
 type Location = {
+    latitude: number;
+    longitude: number;
     name: string;
-    lat: number;
-    lon: number;
+    todos: object;
 }
 
 export const Dashboard = () => {
@@ -21,14 +27,33 @@ export const Dashboard = () => {
     const [lat, setLat] = useState(location.lat);
     const [lon, setLon] = useState(location.lon);
     const [name, setName] = useState("");
-    const [locationList, setLocationList] = useState<string[]>([]);
+    const [locationList, setLocationList] = useState<Location[]>([]);
+    const [todoList, setTodoList] = useState<Todo[]>([]);
 
     useEffect(()=>{
         get(child(ref(rtdb), `users/${user?.uid}/locations`))
         .then(snapshot =>{
-            setLocationList(Object.keys(snapshot.val()))
-        })
+            const obj = snapshot.val()
+            let newLocList: Location[] = [];
+            for (let key of Object.keys(obj)) {
+                const newLocation: Location = obj[key];
+                newLocList.push(newLocation)
+                // console.log(`${key} : ${obj[key]}`)
+                // console.log(`${key}[todos] : ${newLocation.todos.todo.message}`)
+            }
+            setLocationList(newLocList);
+        });
     },[])
+    
+    function getTodos(location: Location) {
+        let newTodoList: Todo[] = [];
+        for (let key of Object.keys(location.todos)) {
+            console.log(key)
+            const newTodo: Todo = location.todos[key];
+            newTodoList.push(newTodo);
+        }
+        setTodoList(newTodoList);
+    }
 
 
 
@@ -57,9 +82,9 @@ export const Dashboard = () => {
                         <button className="action" onClick={() => setEdit(!edit)}>{edit ? "Confirm" : "Edit Locations"}</button>
                         <div>
                             {locationList.map(l => (
-                                <div className="location" key={l}>
+                                <div className="location" key={l.name}>
                                     {edit ? (<button className="action">x</button>) : <div></div>}
-                                    <div className="loc-text" onClick={() => setLoc(l)}>{`${l}`}</div>
+                                    <div className="loc-text" onClick={() => getTodos(l)}>{`${l.name}`}</div>
                                 </div>
                             ))}
                         </div>
@@ -88,10 +113,11 @@ export const Dashboard = () => {
                 <div className="main-content">
                     <div className="sub-header">Current Location: {loc}</div>
                     <div>
-                        <div>Do Homework</div>
-                        <div>Eat Lunch</div>
-                        <div>???</div>
-                        <div>Prosper</div>
+                        {
+                            todoList.map((todo) => (
+                                <div key={todo.message}>{todo.message}</div>
+                            ))
+                        }
                     </div>
                 </div>
                 <div className="side-bar">
