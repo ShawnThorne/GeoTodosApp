@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 
 export const Login = () => {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -23,8 +22,9 @@ export const Login = () => {
   
     function login() {
       signInWithEmailAndPassword(auth, email, password)
-        .then(({user}) => {
-          navigate('/dashboard')
+        .then(() => {
+          navigate('/dashboard');
+          location.reload();
         })
     }
   

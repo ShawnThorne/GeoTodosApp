@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Outlet, useNavigate } from "react-router-dom"
 import UserContext, { User } from '../context/user';
 import { auth } from "../lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 export const Layout = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -14,9 +14,9 @@ export const Layout = () => {
       setLoading(false);
       if (user !== null) {
         setUser(user as User);
-      } else {
+    } else {
         setUser(null)
-      }
+    }
     });
     return cleanup;
   }, [loading]);
@@ -27,6 +27,7 @@ export const Layout = () => {
             <nav className="top">
                 <button onClick={() =>navigate("/dashboard")}>Home</button>
                 <button onClick={() =>navigate("/login")}>Login</button>
+                <button onClick={() => signOut(auth)}>Logout</button>
             </nav>
             {loading ? <div>Loading...</div> : <Outlet />}
         </div>

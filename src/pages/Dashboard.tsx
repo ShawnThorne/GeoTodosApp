@@ -4,6 +4,7 @@ import { LocationContext } from "../context/location";
 import UserContext from "../context/user";
 import { ref, set, get, child, remove } from "firebase/database";
 import { rtdb } from "../lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 type Todo = {
     isComplete: boolean;
@@ -20,7 +21,8 @@ type Location = {
 export const Dashboard = () => {
     const user = useContext(UserContext);
     const location = useContext(LocationContext);
-    const [loc, setLoc] = useState<Location>({latitude: Math.round(location.lat * 1000) / 1000, longitude: Math.round(location.lon * 1000) / 1000, name: "", todos: ""});
+    const defaultLocation: Location = {latitude: Math.round(location.lat * 1000) / 1000, longitude: Math.round(location.lon * 1000) / 1000, name: "", todos: ""}
+    const [loc, setLoc] = useState<Location>(defaultLocation);
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
     const [addLoc, setAddLoc] = useState(false);
@@ -30,18 +32,27 @@ export const Dashboard = () => {
     const [locationList, setLocationList] = useState<Location[]>([]);
     const [todoList, setTodoList] = useState<Todo[]>([]);
     const [check, setCheck] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(!!user);
     
     //TODO Make a request to each of the locations in the list and figure out which distance is shorter, then set the current location as that location
     // const directionsService = new google.maps.DirectionsService();
     // const start = new google.maps.LatLng(location.lat, location.lon);
 
+    useEffect(()=> {
+        if (user !== null) {
+            setLoggedIn(true);
+        } else {
+            setLoggedIn(false);
+        }
+    }, [user])
+
     useEffect(()=>{
         get(child(ref(rtdb), `users/${user?.uid}/locations`))
         .then(snapshot =>{
-            let obj = snapshot.val()
+        try {
+            const obj = snapshot.val()
             let newLocList: Location[] = [];
-            // let distanceList: number[] = [];
-            // let minDist = -1
+            let minDist = -1
             for (let key of Object.keys(obj)) {
                 let newLocation: Location = obj[key];
                 newLocList.push(newLocation);
@@ -61,19 +72,30 @@ export const Dashboard = () => {
             //             }
             //         }
             //     });
+                fetch(`https://api.mapbox.com/directions/v5/mapbox/cycling/${location.lon},${location.lat};${newLocation.longitude},${newLocation.latitude}?access_token=pk.eyJ1IjoiYWdnaWVmYW45IiwiYSI6ImNsaDZydzFndDA4dTQzbG9uaGVnNTV4dW4ifQ.fEcntaUyjN4QsE3OvfDHcw`)
+                .then(r => r.json())
+                .then(json => {
+                    let distance = json.routes[0].distance;
+                    if (minDist < 0 || distance < minDist) {
+                        minDist = distance;
+                        getTodos(newLocation);
+                    }
+                })
             }
-            // for (let i in distanceList) {
-            //     if (distanceList[i] === minDist) {
-            //         getTodos(locationList[i]);
-            //     }
-            // }
             setLocationList(newLocList);
             setCheck(false);
+        } catch (error) {
+            setLocationList([]);
+            setTodoList([]);
+            setLoc(defaultLocation);
+            setCheck(false);
+        }
         });
         // I Don't think we need this anymore if we can figure out the code above
         // fetch("https://maps.googleapis.com/maps/api/distancematrix/json?destinations=New%20York%20City%2C%20NY&origins=Washington%2C%20DC%7CBoston&units=imperial&key=AIzaSyCsT9S9AOKonSMsFcI3wQUjI7dub4i49fY")
     },[check])
     
+
     function getTodos(location: Location) {
         let newTodoList: Todo[] = [];
         for (let key of Object.keys(location.todos)) {
@@ -102,64 +124,78 @@ export const Dashboard = () => {
             setLat(location.lat);
             setLon(location.lon);
             setName("");
+            setCheck(true);
         }
     }
 
     return (
-        <div className="dashboard">
-            <div className="header">Dashboard</div>
-            <div className="side-bar-container">
-                <div className="side-bar">
-                    <div>Locations</div>
-                    <div className="list">
-                        <button className="action" onClick={() => setEdit(!edit)}>{edit ? "Confirm" : "Edit Locations"}</button>
-                        <div>
-                            {locationList.map(l => (
-                                <div className="location" key={l.name}>
-                                    {edit ? (<button className="action" onClick={() => deleteLoc(l)}>x</button>) : <div></div>}
-                                    <div className="loc-text" onClick={() => getTodos(l)}>{`${l.name}`}</div>
-                                </div>
-                            ))}
+        <>
+            {loggedIn ? (<div className="dashboard">
+                <div className="header">Dashboard</div>
+                <div className="side-bar-container">
+                    <div className="side-bar">
+                        <div>Locations</div>
+                        <div className="list">
+                            <button className="action" onClick={() => setEdit(!edit)}>{edit ? "Confirm" : "Edit Locations"}</button>
+                            <div>
+                                {locationList.map(l => (
+                                    <div className="location" key={l.name}>
+                                        {edit ? (<button className="action" onClick={() => deleteLoc(l)}>x</button>) : <div></div>}
+                                        <div className="loc-text" onClick={() => getTodos(l)}>{`${l.name}`}</div>
+                                    </div>
+                                ))}
+                            </div>
+                            <button className="action" onClick={() => {
+                                if (addLoc) {
+                                    saveLoc();
+                                }
+                                setAddLoc(!addLoc);
+                            }}>{addLoc ? "Save" : "Add Location"}</button>
+                            <div>
+                                {addLoc ? (
+                                    <div>
+                                        <form>
+                                            <div>Latitude</div>
+                                            <input type="number" value={lat} onChange={(e) => setLat(+e.target.value)}/>
+                                            <div>Longitude</div>
+                                            <input type="number" value={lon} onChange={(e) => setLon(+e.target.value)}/>
+                                            <div>Name</div>
+                                            <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
+                                        </form>
+                                    </div>
+                                ) : <div></div>}
+                            </div>
                         </div>
-                        <button className="action" onClick={() => {
-                            if (addLoc) {
-                                saveLoc();
+                    </div>
+                    <div className="main-content">
+                        <div className="sub-header">Location: {loc.name} ({loc.longitude},{loc.latitude})</div>
+                        <div>
+                            {
+                                todoList.map((todo) => (
+                                    <div className={`todo ${todo.isComplete ? 'complete' : ''}`} key={todo.message} onClick={() => navigate(`/todo/${loc.name}/${todo.message}`)}>
+                                        {todo.message}
+                                    </div>
+                                ))
                             }
-                            setAddLoc(!addLoc);
-                        }}>{addLoc ? "Save" : "Add Location"}</button>
-                        <div>
-                            {addLoc ? (
-                                <div>
-                                    <form>
-                                        <div>Latitude</div>
-                                        <input type="number" value={lat} onChange={(e) => setLat(+e.target.value)}/>
-                                        <div>Longitude</div>
-                                        <input type="number" value={lon} onChange={(e) => setLon(+e.target.value)}/>
-                                        <div>Name</div>
-                                        <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
-                                    </form>
-                                </div>
-                            ) : <div></div>}
                         </div>
                     </div>
-                </div>
-                <div className="main-content">
-                    <div className="sub-header">Location: {loc.name} ({loc.latitude},{loc.longitude})</div>
-                    <div>
-                        {
-                            todoList.map((todo) => (
-                                <div className={`todo ${todo.isComplete ? 'complete' : ''}`} key={todo.message} onClick={() => navigate(`/todo/${loc.name}/${todo.message}`)}>
-                                    {todo.message}
-                                </div>
-                            ))
-                        }
+                    <div className="side-bar">
+                        <div>Actions</div>
+                        <button onClick={() => navigate("/todo/create")}>Create Todo</button>
                     </div>
                 </div>
-                <div className="side-bar">
-                    <div>Actions</div>
-                    <button onClick={() => navigate("/todo/create")}>Create Todo</button>
-                </div>
-            </div>
-        </div>
+            </div>) : <div>
+                <div className="header">Geo-Todos App</div>
+                <p>Welcome to the Geo-Todos App! Here you can keep track of all your tasks, and separate them by location! Not at work?? Not a problem! You can leave your work at work and not even have to worry about those tasks at home!</p>
+                <p>Once signed in, come back to the home page and you will see your dashboard. To the left you will see a list of all your given locations. Don't worry if you don't have any, simply click "Add Location" and enter the latitude and longitude and give it a name to get started!
+                    The "Edit Locations" button gives you the chance to delete insignificant locations you no longer need. Clicking on a location will show all associated todos.
+                </p>
+                <p>Then you have the opportunity to add tasks for yourself for all locations you have! Simply click the "Create Todo" button on the right sidebar and you can add any tasks for any location, and if you need to add a new one on the fly, you can do that too!
+                    Just give us a name and we will set up your current location to recieve tasks!
+                </p>
+                <p>The center of the page contains a list of all todos associated with the currently selected location. Todos in green are completed, and todos in blue are yet to be finished. Clicking on a todo will take you to the details page of the todo, where you can update the task, complete it, or even delete it if it is out of scope!</p>
+                <p>We hope you enjoy, and may your productivity Soar beyond previous limits!</p>
+            </div>}
+        </>
     )
 }

@@ -23,9 +23,9 @@ export const Todo = () => {
     },[])
 
     function completeTask(){
-        set(ref(rtdb,`/users/${user?.uid}/locations/${params.location}/todos/${params.message}`),{
+        set(ref(rtdb,`/users/${user?.uid}/locations/${params.location}/todos/${message}`),{
             isComplete: !isComplete,
-            message: params.message
+            message: message
         }).then(()=>{
             navigate('/dashboard');
         })
