@@ -4,7 +4,6 @@ import { Dashboard } from './pages/Dashboard';
 import { Todo } from './pages/Todo';
 import { CreateTodo } from './pages/CreateTodo';
 import {
-  createBrowserRouter,
   createHashRouter,
   RouterProvider,
 } from "react-router-dom";
@@ -55,17 +54,6 @@ function App() {
     }, {
       enableHighAccuracy: true,
     })
-    // const watch = navigator.geolocation.watchPosition((location) => {
-    //   setLat(location.coords.latitude);
-    //   setLon(location.coords.longitude);
-    //   setLocationLoaded(true);
-    // }, (err) => {
-    //   console.log(err)
-    // }, {
-    //   enableHighAccuracy: true,
-    // })
-
-    // return () => navigator.geolocation.clearWatch(watch)
   }, []);
 
   return (

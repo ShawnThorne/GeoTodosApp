@@ -5,30 +5,21 @@ import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 export const Layout = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO auth stuff
     const cleanup = onAuthStateChanged(auth, (user) => {
       setLoading(false);
       if (user !== null) {
         setUser(user as User);
-        setLoggedIn(!!user);
       } else {
         setUser(null)
-        setLoggedIn(false);
       }
-      console.log("Our user is: ", user);
     });
-
-    // if (!loading) {
-    //   navigate(loggedIn ? '/dashboard' : '/login');
-    // }
     return cleanup;
-  }, [loggedIn, loading]);
+  }, [loading]);
 
   return(
     <UserContext.Provider value={user}>
