@@ -1,8 +1,8 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { LocationContext } from "../context/location";
 import UserContext from "../context/user";
-import { onValue, ref, set, push, onChildAdded } from "firebase/database";
+import { onValue, ref, set, push, onChildAdded, get, child } from "firebase/database";
 import { rtdb } from "../lib/firebase";
 
 type Location = {
@@ -21,28 +21,30 @@ export const Dashboard = () => {
     const [lat, setLat] = useState(location.lat);
     const [lon, setLon] = useState(location.lon);
     const [name, setName] = useState("");
-    const [locationList, setLocationList] = useState<Location[]>([]);
+    const [locationList, setLocationList] = useState<string[]>([]);
 
-    // const locationsRef = ref(rtdb, 'users/' + user?.uid + '/locations');
-    // onValue(locationsRef, (snapshot) => {
-    //     const data = snapshot.val();
-    //     setLocationList(data);
-    // });
+    useEffect(()=>{
+        get(child(ref(rtdb), `users/${user?.uid}/locations`))
+        .then(snapshot =>{
+            setLocationList(Object.keys(snapshot.val()))
+        })
+    },[])
+
 
 
     function saveLoc() {
-        if (name !== "") {
-            console.log(`Name: ${name}, Lat: ${lat}, Lon: ${lon}`);
-            const newLocation: Location = {
-                name,
-                lat,
-                lon
-            }
-            setLocationList([...locationList, newLocation]);
-            setLat(location.lat);
-            setLon(location.lon);
-            setName("");
-        }
+    //     if (name !== "") {
+    //         console.log(`Name: ${name}, Lat: ${lat}, Lon: ${lon}`);
+    //         const newLocation: Location = {
+    //             name,
+    //             lat,
+    //             lon
+    //         }
+    //         setLocationList([...locationList, newLocation]);
+    //         setLat(location.lat);
+    //         setLon(location.lon);
+    //         setName("");
+    //     }
     }
 
     return (
@@ -55,9 +57,9 @@ export const Dashboard = () => {
                         <button className="action" onClick={() => setEdit(!edit)}>{edit ? "Confirm" : "Edit Locations"}</button>
                         <div>
                             {locationList.map(l => (
-                                <div className="location" key={l.name}>
+                                <div className="location" key={l}>
                                     {edit ? (<button className="action">x</button>) : <div></div>}
-                                    <div className="loc-text" onClick={() => setLoc(l.name)}>{`${l.name}`}</div>
+                                    <div className="loc-text" onClick={() => setLoc(l)}>{`${l}`}</div>
                                 </div>
                             ))}
                         </div>
