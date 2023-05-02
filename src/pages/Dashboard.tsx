@@ -31,25 +31,22 @@ export const Dashboard = () => {
     const [todoList, setTodoList] = useState<Todo[]>([]);
     const [check, setCheck] = useState(false);
     
-    
-    // const directionsService = new google.maps.DirectionsService();
     //TODO Make a request to each of the locations in the list and figure out which distance is shorter, then set the current location as that location
+    // const directionsService = new google.maps.DirectionsService();
     // const start = new google.maps.LatLng(location.lat, location.lon);
 
-
     useEffect(()=>{
-
         get(child(ref(rtdb), `users/${user?.uid}/locations`))
         .then(snapshot =>{
-            const obj = snapshot.val()
+            let obj = snapshot.val()
             let newLocList: Location[] = [];
-            let distanceList: number[] = [];
-            let minDist = -1
+            // let distanceList: number[] = [];
+            // let minDist = -1
             for (let key of Object.keys(obj)) {
-                const newLocation: Location = obj[key];
+                let newLocation: Location = obj[key];
                 newLocList.push(newLocation);
-            //     const end = new google.maps.LatLng(newLocation.latitude, newLocation.longitude);
-            //     const request = {
+            //     let end = new google.maps.LatLng(newLocation.latitude, newLocation.longitude);
+            //     let request = {
             //         origin: start,
             //         destination: end,
             //         travelMode: 'DRIVING'
@@ -67,23 +64,24 @@ export const Dashboard = () => {
             }
             // for (let i in distanceList) {
             //     if (distanceList[i] === minDist) {
-            //         setLoc(locationList[i]);
+            //         getTodos(locationList[i]);
             //     }
             // }
             setLocationList(newLocList);
             setCheck(false);
         });
+        // I Don't think we need this anymore if we can figure out the code above
         // fetch("https://maps.googleapis.com/maps/api/distancematrix/json?destinations=New%20York%20City%2C%20NY&origins=Washington%2C%20DC%7CBoston&units=imperial&key=AIzaSyCsT9S9AOKonSMsFcI3wQUjI7dub4i49fY")
     },[check])
     
     function getTodos(location: Location) {
         let newTodoList: Todo[] = [];
         for (let key of Object.keys(location.todos)) {
-            const newTodo: Todo = location.todos[key];
+            let newTodo: Todo = location.todos[key];
             newTodoList.push(newTodo);
         }
-        setTodoList(newTodoList);
         setLoc(location);
+        setTodoList(newTodoList);
     }
 
     function deleteLoc(toDelete: Location) {
@@ -93,7 +91,7 @@ export const Dashboard = () => {
 
     function saveLoc() {
         if (name !== "") {
-            const newLocation: Location = {
+            let newLocation: Location = {
                 name: name,
                 latitude: Math.round(lat * 1000) / 1000,
                 longitude: Math.round(lon * 1000) / 1000,
