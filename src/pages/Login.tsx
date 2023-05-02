@@ -12,7 +12,7 @@ export const Login = () => {
     function signUp() {
       createUserWithEmailAndPassword(auth, email, password)
         .then(({user}) => {
-          set(ref(rtdb, 'users/' + email.replace('.','-')),{
+          set(ref(rtdb, 'users/' + user.uid),{
             email,
           })
         })
