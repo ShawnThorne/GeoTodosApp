@@ -4,7 +4,6 @@ import { LocationContext } from "../context/location";
 import UserContext from "../context/user";
 import { ref, set, get, child, remove } from "firebase/database";
 import { rtdb } from "../lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { HelpPage } from "./Help";
 
 type Todo = {
@@ -35,10 +34,6 @@ export const Dashboard = () => {
     const [check, setCheck] = useState(false);
     const [loggedIn, setLoggedIn] = useState(!!user);
     
-    //TODO Make a request to each of the locations in the list and figure out which distance is shorter, then set the current location as that location
-    // const directionsService = new google.maps.DirectionsService();
-    // const start = new google.maps.LatLng(location.lat, location.lon);
-
     useEffect(()=> {
         if (user !== null) {
             setLoggedIn(true);
@@ -57,22 +52,6 @@ export const Dashboard = () => {
             for (let key of Object.keys(obj)) {
                 let newLocation: Location = obj[key];
                 newLocList.push(newLocation);
-            //     let end = new google.maps.LatLng(newLocation.latitude, newLocation.longitude);
-            //     let request = {
-            //         origin: start,
-            //         destination: end,
-            //         travelMode: 'DRIVING'
-            //     };
-            //     directionsService.route(request, function(result, status) {
-            //         if (status == 'OK') {
-            //             let dist = result.routes[0].legs[0].distance.value
-            //             console.log(dist);
-            //             distanceList.push(dist);
-            //             if (minDist < 0 || dist < minDist) {
-            //                 minDist = dist;
-            //             }
-            //         }
-            //     });
                 fetch(`https://api.mapbox.com/directions/v5/mapbox/cycling/${location.lon},${location.lat};${newLocation.longitude},${newLocation.latitude}?access_token=pk.eyJ1IjoiYWdnaWVmYW45IiwiYSI6ImNsaDZydzFndDA4dTQzbG9uaGVnNTV4dW4ifQ.fEcntaUyjN4QsE3OvfDHcw`)
                 .then(r => r.json())
                 .then(json => {
@@ -92,11 +71,8 @@ export const Dashboard = () => {
             setCheck(false);
         }
         });
-        // I Don't think we need this anymore if we can figure out the code above
-        // fetch("https://maps.googleapis.com/maps/api/distancematrix/json?destinations=New%20York%20City%2C%20NY&origins=Washington%2C%20DC%7CBoston&units=imperial&key=AIzaSyCsT9S9AOKonSMsFcI3wQUjI7dub4i49fY")
     },[check])
     
-
     function getTodos(location: Location) {
         let newTodoList: Todo[] = [];
         for (let key of Object.keys(location.todos)) {
