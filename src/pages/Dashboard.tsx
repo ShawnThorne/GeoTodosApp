@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { LocationContext } from "../context/location";
 import UserContext from "../context/user";
-import { onValue, ref, set, push, onChildAdded, get, child } from "firebase/database";
+import { ref, set, get, child, remove } from "firebase/database";
 import { rtdb } from "../lib/firebase";
 
 type Todo = {
@@ -14,7 +14,7 @@ type Location = {
     latitude: number;
     longitude: number;
     name: string;
-    todos: object;
+    todos: string;
 }
 
 export const Dashboard = () => {
@@ -29,6 +29,7 @@ export const Dashboard = () => {
     const [name, setName] = useState("");
     const [locationList, setLocationList] = useState<Location[]>([]);
     const [todoList, setTodoList] = useState<Todo[]>([]);
+    const [check, setCheck] = useState(false);
 
     useEffect(()=>{
         get(child(ref(rtdb), `users/${user?.uid}/locations`))
@@ -42,8 +43,9 @@ export const Dashboard = () => {
                 // console.log(`${key}[todos] : ${newLocation.todos.todo.message}`)
             }
             setLocationList(newLocList);
+            setCheck(false);
         });
-    },[])
+    },[check])
     
     function getTodos(location: Location) {
         let newTodoList: Todo[] = [];
@@ -53,23 +55,35 @@ export const Dashboard = () => {
             newTodoList.push(newTodo);
         }
         setTodoList(newTodoList);
+        setLoc(location.name);
     }
 
-
+    function deleteLoc(toDelete: Location) {
+        remove(ref(rtdb,`/users/${user?.uid}/locations/${toDelete.name}`));
+        setCheck(true);
+    }
 
     function saveLoc() {
-    //     if (name !== "") {
-    //         console.log(`Name: ${name}, Lat: ${lat}, Lon: ${lon}`);
-    //         const newLocation: Location = {
-    //             name,
-    //             lat,
-    //             lon
-    //         }
-    //         setLocationList([...locationList, newLocation]);
-    //         setLat(location.lat);
-    //         setLon(location.lon);
-    //         setName("");
-    //     }
+        //TODO: Actually add it to the database
+        if (name !== "") {
+            console.log(`Name: ${name}, Lat: ${lat}, Lon: ${lon}`);
+            const newLocation: Location = {
+                name: name,
+                latitude: lat,
+                longitude: lon,
+                todos: ""
+            }
+            set(ref(rtdb,`/users/${user?.uid}/locations/${newLocation.name}`),{
+                name: newLocation.name,
+                latitude: Math.round(lat * 1000) / 1000,
+                longitude: Math.round(lon * 1000) / 1000,
+                todos: ""
+            })
+            setLocationList([...locationList, newLocation]);
+            setLat(location.lat);
+            setLon(location.lon);
+            setName("");
+        }
     }
 
     return (
@@ -83,7 +97,7 @@ export const Dashboard = () => {
                         <div>
                             {locationList.map(l => (
                                 <div className="location" key={l.name}>
-                                    {edit ? (<button className="action">x</button>) : <div></div>}
+                                    {edit ? (<button className="action" onClick={() => deleteLoc(l)}>x</button>) : <div></div>}
                                     <div className="loc-text" onClick={() => getTodos(l)}>{`${l.name}`}</div>
                                 </div>
                             ))}
@@ -115,7 +129,9 @@ export const Dashboard = () => {
                     <div>
                         {
                             todoList.map((todo) => (
-                                <div key={todo.message}>{todo.message}</div>
+                                <div className="todo" key={todo.message} onClick={() => navigate(`/todo/${loc}/${todo.message}`)}>
+                                    {todo.message}
+                                </div>
                             ))
                         }
                     </div>

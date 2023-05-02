@@ -184,3 +184,9 @@ button:focus-visible {
   padding-bottom: 8px;
   width: 100%;
 }
+
+.todo {
+  background-color:#314557;
+  border-radius: 5px;
+  margin: 4px;
+}
