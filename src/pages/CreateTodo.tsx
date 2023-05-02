@@ -20,7 +20,7 @@ export const CreateTodo = () => {
 
     function saveData(){
         if(chosenLocation === ""){
-            set(ref(rtdb,`/users/${user?.uid}/locations/${newLocation}/latlon`),{
+            set(ref(rtdb,`/users/${user?.uid}/locations/${newLocation}`),{
                 latitude: Math.round(location.lat * 1000) / 1000,
                 longitude: Math.round(location.lon * 1000) / 1000
             }).then(()=>{
