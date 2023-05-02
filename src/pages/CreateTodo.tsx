@@ -30,7 +30,7 @@ export const CreateTodo = () => {
                 })
             })
         } else {
-            set(ref(rtdb,`/users/${user?.uid}/locations/${newLocation}/todos/${message}`),{
+            set(ref(rtdb,`/users/${user?.uid}/locations/${chosenLocation}/todos/${message}`),{
                 message,
                 isComplete: false
             })
@@ -57,7 +57,7 @@ export const CreateTodo = () => {
                 </div>
             }
             <br />
-            <button onClick={()=>saveData}>Save</button>
+            <button onClick={()=>saveData()}>Save</button>
         </div>
     )
 }
