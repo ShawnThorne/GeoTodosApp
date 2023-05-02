@@ -1,8 +1,10 @@
 import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { LocationContext } from "../context/location";
+import UserContext from "../context/user";
 
 export const Dashboard = () => {
+    const user = useContext(UserContext);
     const location = useContext(LocationContext);
     const [loc, setLoc] = useState(`(${Math.round(location.lat * 1000) / 1000}, ${Math.round(location.lon * 1000) / 1000})`);
     const navigate = useNavigate();

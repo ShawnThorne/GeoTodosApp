@@ -1,23 +1,26 @@
 import { useState } from "react";
-import { auth } from "../lib/firebase";
+import { auth, rtdb } from "../lib/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { set, ref } from "firebase/database";
 
 
 export const Login = () => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
   
     function signUp() {
       createUserWithEmailAndPassword(auth, email, password)
         .then(({user}) => {
-          console.log(user);
+          set(ref(rtdb, 'users/' + email.replace('.','-')),{
+            email,
+          })
         })
     }
   
     function login() {
       signInWithEmailAndPassword(auth, email, password)
         .then(({user}) => {
-          console.log(user)
         })
     }
   
