@@ -21,6 +21,7 @@ export const CreateTodo = () => {
     function saveData(){
         if(chosenLocation === ""){
             set(ref(rtdb,`/users/${user?.uid}/locations/${newLocation}`),{
+                name: newLocation,
                 latitude: Math.round(location.lat * 1000) / 1000,
                 longitude: Math.round(location.lon * 1000) / 1000
             }).then(()=>{
@@ -31,6 +32,7 @@ export const CreateTodo = () => {
             })
         } else {
             set(ref(rtdb,`/users/${user?.uid}/locations/${chosenLocation}/todos/${message}`),{
+                name: chosenLocation,
                 message,
                 isComplete: false
             })
