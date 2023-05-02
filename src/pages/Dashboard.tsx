@@ -52,7 +52,7 @@ export const Dashboard = () => {
             newTodoList.push(newTodo);
         }
         setTodoList(newTodoList);
-        setLoc(location.name);
+        setLoc(`${location.name} (${location.latitude},${location.longitude})`);
     }
 
     function deleteLoc(toDelete: Location) {
@@ -115,7 +115,7 @@ export const Dashboard = () => {
                     </div>
                 </div>
                 <div className="main-content">
-                    <div className="sub-header">Current Location: {loc}</div>
+                    <div className="sub-header">Location: {loc}</div>
                     <div>
                         {
                             todoList.map((todo) => (
