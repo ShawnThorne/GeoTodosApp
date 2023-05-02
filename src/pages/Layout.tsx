@@ -24,9 +24,9 @@ export const Layout = () => {
       console.log("Our user is: ", user);
     });
 
-    if (!loading) {
-      navigate(loggedIn ? '/dashboard' : '/login');
-    }
+    // if (!loading) {
+    //   navigate(loggedIn ? '/dashboard' : '/login');
+    // }
     return cleanup;
   }, [loggedIn, loading]);
 

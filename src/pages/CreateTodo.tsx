@@ -3,8 +3,10 @@ import { get, set, ref, child } from "firebase/database";
 import UserContext from "../context/user";
 import { LocationContext } from "../context/location";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const CreateTodo = () => {
+    const nav = useNavigate();
     const user = useContext(UserContext);
     const location = useContext(LocationContext);
     const [message, setMessage] = useState("");
@@ -29,12 +31,15 @@ export const CreateTodo = () => {
                     message,
                     isComplete: false
                 })
+            }).then(()=>{
+                nav('/dashboard')
             })
         } else {
             set(ref(rtdb,`/users/${user?.uid}/locations/${chosenLocation}/todos/${message}`),{
-                name: chosenLocation,
                 message,
                 isComplete: false
+            }).then(()=>{
+                nav('/dashboard')
             })
         }
     }

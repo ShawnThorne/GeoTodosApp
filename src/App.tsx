@@ -28,7 +28,7 @@ const router = createBrowserRouter([
         element: <Dashboard/>
       },
       {
-        path: "/todo/:id",
+        path: "/todo/:location/:message",
         element: <Todo/>
       },
       {

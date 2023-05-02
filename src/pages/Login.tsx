@@ -2,12 +2,14 @@ import { useState } from "react";
 import { auth, rtdb } from "../lib/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { set, ref } from "firebase/database";
+import { useNavigate } from "react-router-dom";
 
 
 export const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
   
     function signUp() {
       createUserWithEmailAndPassword(auth, email, password)
@@ -15,12 +17,14 @@ export const Login = () => {
           set(ref(rtdb, 'users/' + user.uid),{
             email,
           })
+          navigate('/dashboard')
         })
     }
   
     function login() {
       signInWithEmailAndPassword(auth, email, password)
         .then(({user}) => {
+          navigate('/dashboard')
         })
     }
   
