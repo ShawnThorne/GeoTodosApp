@@ -18,10 +18,6 @@ type Location = {
 }
 
 export const Dashboard = () => {
-
-    const directionsService = new google.maps.DirectionsService();
-    //TODO Make a request to each of the locations in the list and figure out which distance is shorter, then set the current location as that location
-
     const user = useContext(UserContext);
     const location = useContext(LocationContext);
     const [loc, setLoc] = useState<Location>({latitude: Math.round(location.lat * 1000) / 1000, longitude: Math.round(location.lon * 1000) / 1000, name: "", todos: ""});
@@ -34,6 +30,12 @@ export const Dashboard = () => {
     const [locationList, setLocationList] = useState<Location[]>([]);
     const [todoList, setTodoList] = useState<Todo[]>([]);
     const [check, setCheck] = useState(false);
+    
+    
+    // const directionsService = new google.maps.DirectionsService();
+    //TODO Make a request to each of the locations in the list and figure out which distance is shorter, then set the current location as that location
+    // const start = new google.maps.LatLng(location.lat, location.lon);
+
 
     useEffect(()=>{
 
@@ -41,14 +43,37 @@ export const Dashboard = () => {
         .then(snapshot =>{
             const obj = snapshot.val()
             let newLocList: Location[] = [];
+            let distanceList: number[] = [];
+            let minDist = -1
             for (let key of Object.keys(obj)) {
                 const newLocation: Location = obj[key];
-                newLocList.push(newLocation)
+                newLocList.push(newLocation);
+            //     const end = new google.maps.LatLng(newLocation.latitude, newLocation.longitude);
+            //     const request = {
+            //         origin: start,
+            //         destination: end,
+            //         travelMode: 'DRIVING'
+            //     };
+            //     directionsService.route(request, function(result, status) {
+            //         if (status == 'OK') {
+            //             let dist = result.routes[0].legs[0].distance.value
+            //             console.log(dist);
+            //             distanceList.push(dist);
+            //             if (minDist < 0 || dist < minDist) {
+            //                 minDist = dist;
+            //             }
+            //         }
+            //     });
             }
+            // for (let i in distanceList) {
+            //     if (distanceList[i] === minDist) {
+            //         setLoc(locationList[i]);
+            //     }
+            // }
             setLocationList(newLocList);
             setCheck(false);
         });
-        fetch("https://maps.googleapis.com/maps/api/distancematrix/json?destinations=New%20York%20City%2C%20NY&origins=Washington%2C%20DC%7CBoston&units=imperial&key=AIzaSyCsT9S9AOKonSMsFcI3wQUjI7dub4i49fY")
+        // fetch("https://maps.googleapis.com/maps/api/distancematrix/json?destinations=New%20York%20City%2C%20NY&origins=Washington%2C%20DC%7CBoston&units=imperial&key=AIzaSyCsT9S9AOKonSMsFcI3wQUjI7dub4i49fY")
     },[check])
     
     function getTodos(location: Location) {
