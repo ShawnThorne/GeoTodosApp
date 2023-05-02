@@ -18,6 +18,8 @@ type Location = {
 }
 
 export const Dashboard = () => {
+
+
     const user = useContext(UserContext);
     const location = useContext(LocationContext);
     const [loc, setLoc] = useState(`(${Math.round(location.lat * 1000) / 1000}, ${Math.round(location.lon * 1000) / 1000})`);
@@ -32,6 +34,7 @@ export const Dashboard = () => {
     const [check, setCheck] = useState(false);
 
     useEffect(()=>{
+
         get(child(ref(rtdb), `users/${user?.uid}/locations`))
         .then(snapshot =>{
             const obj = snapshot.val()
@@ -45,6 +48,7 @@ export const Dashboard = () => {
             setLocationList(newLocList);
             setCheck(false);
         });
+        fetch("https://maps.googleapis.com/maps/api/distancematrix/json?destinations=New%20York%20City%2C%20NY&origins=Washington%2C%20DC%7CBoston&units=imperial&key=AIzaSyCsT9S9AOKonSMsFcI3wQUjI7dub4i49fY")
     },[check])
     
     function getTodos(location: Location) {
@@ -64,7 +68,6 @@ export const Dashboard = () => {
     }
 
     function saveLoc() {
-        //TODO: Actually add it to the database
         if (name !== "") {
             console.log(`Name: ${name}, Lat: ${lat}, Lon: ${lon}`);
             const newLocation: Location = {
