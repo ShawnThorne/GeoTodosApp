@@ -7,6 +7,19 @@ export const Dashboard = () => {
     const [loc, setLoc] = useState(`(${Math.round(location.lat * 1000) / 1000}, ${Math.round(location.lon * 1000) / 1000})`);
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
+    const [addLoc, setAddLoc] = useState(false);
+    const [lat, setLat] = useState(location.lat);
+    const [lon, setLon] = useState(location.lon);
+    const [name, setName] = useState("");
+
+    function saveLoc() {
+        if (name !== "") {
+            console.log(`Name: ${name}, Lat: ${lat}, Lon: ${lon}`);
+            setLat(location.lat);
+            setLon(location.lon);
+            setName("");
+        }
+    }
 
     return (
         <div className="dashboard">
@@ -34,7 +47,26 @@ export const Dashboard = () => {
                                 School
                             </div>
                         </div>
-                        <button className="action">Add Location</button>
+                        <button className="action" onClick={() => {
+                            if (addLoc) {
+                                saveLoc();
+                            }
+                            setAddLoc(!addLoc);
+                        }}>{addLoc ? "Save" : "Add Location"}</button>
+                        <div>
+                            {addLoc ? (
+                                <div>
+                                    <form>
+                                        <div>Latitude</div>
+                                        <input type="number" value={lat} onChange={(e) => setLat(+e.target.value)}/>
+                                        <div>Longitude</div>
+                                        <input type="number" value={lon} onChange={(e) => setLon(+e.target.value)}/>
+                                        <div>Name</div>
+                                        <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
+                                    </form>
+                                </div>
+                            ) : <div></div>}
+                        </div>
                     </div>
                 </div>
                 <div className="main-content">
