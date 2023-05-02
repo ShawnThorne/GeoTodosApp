@@ -205,3 +205,10 @@ button:focus-visible {
   width: 90%;
   overflow-y: scroll;
 }
+
+.help {
+  background-color: #213547;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}

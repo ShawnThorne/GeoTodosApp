@@ -25,6 +25,7 @@ export const Layout = () => {
     <UserContext.Provider value={user}>
         <div className="container">
             <nav className="top">
+                <button onClick={() =>navigate("/help")}>Help</button>
                 <button onClick={() =>navigate("/dashboard")}>Home</button>
                 <button onClick={() =>navigate("/login")}>Login</button>
                 <button onClick={() => signOut(auth)}>Logout</button>

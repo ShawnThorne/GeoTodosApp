@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { Layout } from './pages/Layout';
 import { LocationContext } from './context/location';
+import { HelpPage } from './pages/Help';
 
 const router = createHashRouter([
   {
@@ -34,6 +35,10 @@ const router = createHashRouter([
       {
         path: "/todo/create",
         element: <CreateTodo/>
+      },
+      {
+        path: "/help",
+        element: <HelpPage/>
       },
     ]
   }
