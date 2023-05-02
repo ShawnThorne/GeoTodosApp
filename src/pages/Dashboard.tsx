@@ -42,8 +42,6 @@ export const Dashboard = () => {
             for (let key of Object.keys(obj)) {
                 const newLocation: Location = obj[key];
                 newLocList.push(newLocation)
-                // console.log(`${key} : ${obj[key]}`)
-                // console.log(`${key}[todos] : ${newLocation.todos.todo.message}`)
             }
             setLocationList(newLocList);
             setCheck(false);
@@ -54,12 +52,11 @@ export const Dashboard = () => {
     function getTodos(location: Location) {
         let newTodoList: Todo[] = [];
         for (let key of Object.keys(location.todos)) {
-            console.log(key)
             const newTodo: Todo = location.todos[key];
             newTodoList.push(newTodo);
         }
         setTodoList(newTodoList);
-        setLoc(location.name);
+        setLoc(`${location.name} (${location.latitude},${location.longitude})`);
     }
 
     function deleteLoc(toDelete: Location) {
@@ -69,19 +66,13 @@ export const Dashboard = () => {
 
     function saveLoc() {
         if (name !== "") {
-            console.log(`Name: ${name}, Lat: ${lat}, Lon: ${lon}`);
             const newLocation: Location = {
                 name: name,
-                latitude: lat,
-                longitude: lon,
-                todos: ""
-            }
-            set(ref(rtdb,`/users/${user?.uid}/locations/${newLocation.name}`),{
-                name: newLocation.name,
                 latitude: Math.round(lat * 1000) / 1000,
                 longitude: Math.round(lon * 1000) / 1000,
                 todos: ""
-            })
+            }
+            set(ref(rtdb,`/users/${user?.uid}/locations/${newLocation.name}`),newLocation)
             setLocationList([...locationList, newLocation]);
             setLat(location.lat);
             setLon(location.lon);
@@ -128,7 +119,7 @@ export const Dashboard = () => {
                     </div>
                 </div>
                 <div className="main-content">
-                    <div className="sub-header">Current Location: {loc}</div>
+                    <div className="sub-header">Location: {loc}</div>
                     <div>
                         {
                             todoList.map((todo) => (
